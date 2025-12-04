@@ -7,9 +7,6 @@ workflows:
       flutter: stable
       xcode: latest
       cocoapods: default
-      groups:
-        # Aquí irán tus variables de entorno si las necesitas
-        # - app_store_credentials
       vars:
         # Configura tu bundle ID
         BUNDLE_ID: "com.tuempresa.financeapp"
@@ -58,9 +55,6 @@ workflows:
       flutter: stable
       xcode: latest
       cocoapods: default
-      groups:
-        # Descomentar cuando tengas certificados configurados
-        # - app_store_credentials
       vars:
         BUNDLE_ID: "com.tuempresa.financeapp"
         APP_NAME: "Finance App"
