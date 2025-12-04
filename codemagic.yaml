@@ -1,0 +1,92 @@
+workflows:
+  ios-workflow:
+    name: iOS Workflow
+    instance_type: mac_mini_m1
+    max_build_duration: 60
+    environment:
+      flutter: stable
+      xcode: latest
+      cocoapods: default
+      groups:
+        # Aquí irán tus variables de entorno si las necesitas
+        # - app_store_credentials
+      vars:
+        # Configura tu bundle ID
+        BUNDLE_ID: "com.tuempresa.financeapp"
+        # Nombre de la app
+        APP_NAME: "Finance App"
+    scripts:
+      - name: Set up local properties
+        script: |
+          echo "flutter.sdk=$HOME/programs/flutter" > "$CM_BUILD_DIR/android/local.properties"
+      
+      - name: Get Flutter packages
+        script: |
+          flutter packages pub get
+      
+      - name: Flutter analyze
+        script: |
+          flutter analyze
+      
+      - name: Flutter test
+        script: |
+          flutter test
+        ignore_failure: true
+      
+      - name: Build iOS app
+        script: |
+          flutter build ios --release --no-codesign
+    
+    artifacts:
+      - build/ios/iphoneos/*.app
+      - flutter_drive.log
+    
+    publishing:
+      email:
+        recipients:
+          - tu-email@ejemplo.com  # Reemplaza con tu email
+        notify:
+          success: true
+          failure: true
+
+  # Workflow alternativo para generar IPA (requiere certificados de Apple)
+  ios-release-workflow:
+    name: iOS Release Workflow
+    instance_type: mac_mini_m1
+    max_build_duration: 60
+    environment:
+      flutter: stable
+      xcode: latest
+      cocoapods: default
+      groups:
+        # Descomentar cuando tengas certificados configurados
+        # - app_store_credentials
+      vars:
+        BUNDLE_ID: "com.tuempresa.financeapp"
+        APP_NAME: "Finance App"
+    scripts:
+      - name: Set up local properties
+        script: |
+          echo "flutter.sdk=$HOME/programs/flutter" > "$CM_BUILD_DIR/android/local.properties"
+      
+      - name: Get Flutter packages
+        script: |
+          flutter packages pub get
+      
+      - name: Build IPA
+        script: |
+          flutter build ipa --release
+        # Esto fallará sin certificados de firma, pero puedes configurarlos después
+        ignore_failure: true
+    
+    artifacts:
+      - build/ios/ipa/*.ipa
+      - build/ios/iphoneos/*.app
+    
+    publishing:
+      email:
+        recipients:
+          - tu-email@ejemplo.com  # Reemplaza con tu email
+        notify:
+          success: true
+          failure: true
