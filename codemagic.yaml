@@ -8,10 +8,12 @@ workflows:
       xcode: latest
       cocoapods: default
       vars:
-        # Configura tu bundle ID
-        BUNDLE_ID: "com.tuempresa.financeapp"
-        # Nombre de la app
+        BUNDLE_ID: "com.ahernandez.financeapp"
         APP_NAME: "Finance App"
+        # Variables para firma de código
+        # Debes agregar estas en Codemagic UI:
+        # APPLE_ID: tu email de Apple
+        # APP_SPECIFIC_PASSWORD: irqa-yzvy-yjxh-pigz
     scripts:
       - name: Set up local properties
         script: |
@@ -31,11 +33,18 @@ workflows:
           flutter test
         ignore_failure: true
       
-      - name: Build iOS app
+      - name: Build iOS IPA with automatic code signing
         script: |
-          flutter build ios --release --no-codesign
+          # Configurar firma automática
+          xcode-project use-profiles
+          
+          # Build IPA
+          flutter build ipa --release \
+            --export-options-plist=$HOME/export_options.plist
+        ignore_failure: false
     
     artifacts:
+      - build/ios/ipa/*.ipa
       - build/ios/iphoneos/*.app
       - flutter_drive.log
     
