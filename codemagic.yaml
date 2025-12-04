@@ -44,7 +44,7 @@ workflows:
     publishing:
       email:
         recipients:
-          - tu-email@ejemplo.com  # Reemplaza con tu email
+          - ahernandez429@soyudemedellin.edu.co
         notify:
           success: true
           failure: true
@@ -86,7 +86,7 @@ workflows:
     publishing:
       email:
         recipients:
-          - tu-email@ejemplo.com  # Reemplaza con tu email
+          - ahernandez429@soyudemedellin.edu.co
         notify:
           success: true
           failure: true
