@@ -10,10 +10,11 @@ workflows:
       vars:
         BUNDLE_ID: "com.ahernandez.financeapp"
         APP_NAME: "Finance App"
-        # Variables para firma de código
-        # Debes agregar estas en Codemagic UI:
-        # APPLE_ID: tu email de Apple
-        # APP_SPECIFIC_PASSWORD: irqa-yzvy-yjxh-pigz
+        XCODE_WORKSPACE: "ios/Runner.xcworkspace"
+        XCODE_SCHEME: "Runner"
+      ios_signing:
+        distribution_type: development
+        bundle_identifier: com.ahernandez.financeapp
     scripts:
       - name: Set up local properties
         script: |
@@ -33,15 +34,24 @@ workflows:
           flutter test
         ignore_failure: true
       
-      - name: Build iOS IPA with automatic code signing
+      - name: Set up code signing with Apple credentials
         script: |
-          # Configurar firma automática
-          xcode-project use-profiles
+          # Configurar keychain
+          keychain initialize
           
-          # Build IPA
+          # Usar las credenciales para generar certificados
+          app-store-connect fetch-signing-files "$BUNDLE_ID" \
+            --type IOS_APP_DEVELOPMENT \
+            --create
+          
+          # Aplicar los perfiles
+          keychain add-certificates
+          xcode-project use-profiles
+      
+      - name: Build iOS IPA
+        script: |
           flutter build ipa --release \
             --export-options-plist=$HOME/export_options.plist
-        ignore_failure: false
     
     artifacts:
       - build/ios/ipa/*.ipa
